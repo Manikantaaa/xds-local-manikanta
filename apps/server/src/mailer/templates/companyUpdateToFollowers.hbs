@@ -1,0 +1,45 @@
+<html>
+
+  <head>
+    <title>XDSSPARK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+
+  <body
+    style="width:800px; margin:50px auto;font-family: Arial, Helvetica, sans-serif;"
+  >
+    <table
+      style="border:1px solid #dddddd;width:100%;border-collapse: collapse;"
+    >
+      <tr><td
+         style="text-align:center;background-image: url('{{websiteMailBgUrl}}'); background-size: cover;background-position: center;padding:10px"
+        >
+        <img src="{{websiteLogoUrl}}" alt="XDS-SPARK" width="150" />
+        </td></tr>
+      <tr>
+         <td style="padding:0 20px">
+          <p style="padding-top:10px">Hi {{userName}},</p>
+           <p>Here are some updates from the Service Providers you are following on Spark!</p>
+            {{#each data}}
+              <h3>
+                {{#if this.notifyingCompany.user.assets.[0].url}}
+                  <img src="{{this.notifyingCompany.user.assets.[0].url}}" width="40px" height="40px" style="vertical-align: middle;" />
+                {{else}}
+                  <img src="https://xds-spark.com/circle-no-image-available.jpg" width="40px" height="40px"  style="vertical-align: middle;"/>
+                {{/if}} 
+                <span style="padding-left: 5px; align-self: flex-end;">{{this.notifyingCompany.name}}</span>
+              </h3>
+              <ul>
+                {{#each this.notificationDescriptions}}
+                <li>{{this}}</li>
+                {{/each}}
+              </ul>
+            {{/each}}
+            <p><a href="https://xds-spark.com/login"><u>Log in to Spark</u></a> to follow other Service Providers and be notified of updates to their profiles.</p>
+            <p>Thanks</p>
+          <p>Your friends at XDS Spark</p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

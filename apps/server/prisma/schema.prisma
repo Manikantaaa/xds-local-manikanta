@@ -1,0 +1,1442 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("XDS_DATABASE_URL")
+}
+
+model Users {
+  id                     Int                      @id @default(autoincrement())
+  email                  String                   @unique @db.VarChar(255)
+  firstName              String                   @db.VarChar(255)
+  lastName               String                   @db.VarChar(255)
+  linkedInUrl            String                   @db.VarChar(255)
+  approvalStatus         APPROVAL_STATUS          @default(pending)
+  stripeCustomerId       String?                  @db.VarChar(255)
+  stripeSubscriptionId   String?                  @db.VarChar(255)
+  userType               USER_TYPE                @default(init)
+  trialDuration          TRIAL_PERIOD             @default(weekly)
+  checkedTerms           Boolean                  @default(false)
+  registrationRequests   RegistrationRequests[]
+  userRoles              UserRoles[]
+  accessExpirationDate   DateTime?
+  backupPersonalContacts BackupPersonalContacts[]
+  isPaidUser             Boolean                  @default(false)
+  assets                 Assets[]
+  companies              Companies[]
+  myLists                MyLists[]
+  myProjects             MyProjects[]
+  BillingDetails         BillingDetails[]
+  adminApprovedAt        DateTime                 @default(now())
+  isAddedFromCsv         Boolean                  @default(false)
+  isFlagged              Boolean                  @default(false)
+  isArchieve             Boolean                  @default(false)
+  isDelete               Boolean                  @default(false)
+  isLoggedOnce           Boolean                  @default(false)
+  isThirdParty           Boolean                  @default(false)
+  firstLoggedDate        DateTime?                @db.Date
+  passwordNeedToChange   PASSWORD_STATUS          @default(init)
+  companyUsersLimit      Int                      @default(4)
+  status                 Int                      @default(1)
+  lastLoginDate          DateTime?                @db.Date
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  searchTextStats        searchTextStats[]
+  serviceTextStats       serviceTextStats[]
+  capabilityTextStats    capabilityTextStats[]
+  oldPrimaryEmail        OldPrimaryEmail[]
+  twoFactorDetails       TwoFactorDetails?
+  UserSetting            UserSetting[]
+  UserLogins             UserLogins[]
+  InviteeUserLogins      InviteeUserLogins[]
+  profileViews             ProfileViews[]                  @relation("ViewedProfile")
+  viewers                  ProfileViews[]                  @relation("ViewerProfile")
+  generateFilterLinkaccess GenerateFilterShareLinkaccess[] @relation("generateFilterLinkaccess")
+  GeneratedUrls            GeneratedUrls[]
+  SparkPlusUsers           SparkPlusUsers[]
+  isSparkUser              Boolean                 @default(false)
+}
+
+model Roles {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique
+  code      ROLE_CODE   @unique
+  userRoles UserRoles[]
+}
+
+model UserRoles {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  roleCode   ROLE_CODE @default(buyer)
+  role       Roles     @relation(fields: [roleCode], references: [code], onDelete: Cascade)
+  user       Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isArchieve Boolean   @default(false)
+  isDelete   Boolean   @default(false)
+  status     Int       @default(1)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model RegistrationRequests {
+  id                 Int             @id @default(autoincrement())
+  userId             Int
+  submissionDate     DateTime
+  approvalStatus     APPROVAL_STATUS @default(pending)
+  approvalDate       DateTime?
+  comment            String?
+  completeSetupToken String?
+  user               Users           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isArchieve         Boolean         @default(false)
+  isDelete           Boolean         @default(false)
+  status             Int             @default(1)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+}
+
+model BackupPersonalContacts {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  firstName     String?  @db.VarChar(255)
+  lastName      String?  @db.VarChar(255)
+  email         String?  @db.VarChar(255)
+  passwordToken String?  @db.VarChar(255)
+  user          Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isArchieve    Boolean  @default(false)
+  isDelete      Boolean  @default(false)
+  status        Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Assets {
+  id            Int         @id @default(autoincrement())
+  userId        Int
+  url           String
+  assetType     ASSET_TYPE
+  user          Users       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyLogo   Companies[] @relation("companyLogo")
+  companyBanner Companies[] @relation("companyBanner")
+  isDelete      Boolean     @default(false)
+  status        Int         @default(1)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Companies {
+  id                           Int                              @id @default(autoincrement())
+  userId                       Int
+  name                         String
+  website                      String
+  shortDescription             String?
+  countryNames                 String?
+  companySizes                 CompanySizes?                    @relation(fields: [companySize], references: [id])
+  companySize                  Int?
+  about                        String?
+  user                         Users                            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logoAsset                    Assets?                          @relation("companyLogo", fields: [logoAssetId], references: [id])
+  logoAssetId                  Int?
+  bannerAsset                  Assets?                          @relation("companyBanner", fields: [bannerAssetId], references: [id])
+  bannerAssetId                Int?
+  opportunities                Opportunities[]
+  serviceProvidersIntrests     ServiceProvidersIntrests[]
+  intrestedInMyLists           IntrestedInMyLists[]
+  intrestedInMyProjects        IntrestedInMyProjects[]
+  portfolioProjects            PortfolioProjects[]
+  ServicesOpt                  ServicesOpt[]
+  FileUploads                  FileUploads[]
+  isFoundingSponcer            Boolean                          @default(false)
+  isFlagged                    Boolean                          @default(false)
+  isTourCompleted              Boolean                          @default(false)
+  isArchieve                   Boolean                          @default(false)
+  isDelete                     Boolean                          @default(false)
+  profilePdfPath               String?
+  profilePdfName               String?
+  generalInfoProfilePerc       Int                              @default(0)
+  ourWorkAlbumsProfilePerc     Int                              @default(0)
+  ourWorkProjectProfilePerc    Int                              @default(0)
+  servicesProfilePerc          Int                              @default(0)
+  certificationsProfilePerc    Int                              @default(0)
+  aboutProfilePerc             Int                              @default(0)
+  contactsProfilePerc          Int                              @default(0)
+  status                       Int                              @default(1)
+  profileCompleted             Boolean                          @default(false)
+  slug                         String?                          @unique
+  addedAnnouncement            Boolean                          @default(false)
+  createdAt                    DateTime                         @default(now())
+  updatedAt                    DateTime                         @updatedAt
+  CompanyCounts                CompanyCounts?
+  CompanyAddress               CompanyAddress[]
+  CompanyContacts              CompanyContacts[]
+  CertificationAndDiligence    CertificationAndDiligence?
+  recentlyViewedProfiles       RecentlyViewedProfiles[]         @relation("ViewedCompany")
+  recentlyVisitedProfiles      RecentlyViewedProfiles[]         @relation("VisitorCompany")
+  flaggedUsers                 FlaggedUsers[]                   @relation("flaggedCompany")
+  reportedUsers                FlaggedUsers[]                   @relation("reportedCompany")
+  portfolioAlbum               PortfolioAlbum[]
+  sPBuyerNoteId                SpBuyerNotes[]                   @relation("spbuyernotesId")
+  sPcompanyNoteId              SpBuyerNotes[]                   @relation("spcompanynotesId")
+  sPBuyerRateId                SpRatesbyService[]               @relation("spbuyerRateId")
+  sPBuyerRatecompanyId         SpRatesbyService[]               @relation("spcompanyRateId")
+  sPBuyerprojectId             SpProjectPerformance[]           @relation("spbuyerProjectId")
+  sPBuyerprojectcompanyId      SpProjectPerformance[]           @relation("spcompanyProjectId")
+  sPBuyerRatings               SPBuyerRatingOnserviceProvider[] @relation("sPBuyerRatings")
+  sPBuyerCompanyRatings        SPBuyerRatingOnserviceProvider[] @relation("sPcompanyRatings")
+  buyerCompany                 BuyersStats[]                    @relation("buyerCompany")
+  providerCompany              BuyersStats[]                    @relation("providerCompany")
+  ccsProvidingCompany          CompanyContactStats[]            @relation("providingCompany")
+  ccsContactingCompany         CompanyContactStats[]            @relation("contactingCompany")
+  followingCompanies           FollowDetails[]                  @relation("followingCompany")
+  followedCompanies            FollowDetails[]                  @relation("followedCompany")
+  followNotifyingCompany       FollowNotifications[]            @relation("notifyingCompany")
+  followNotifiedCompany        FollowNotifications[]            @relation("notifiedCompany")
+  generalNotifyingCompany      GeneralNotifications[]           @relation("notifyingCompany")
+  generalNotifiedCompany       GeneralNotifications[]           @relation("notifiedCompany")
+  adminNotifiedCompany         AdminNotifications[]             @relation("adminNotifyToCompany")
+  EventAttendees               EventAttendees[]
+  SponseredServices            SponseredServices[]
+  NewUpdatedUsers              NewUpdatedUsers[]
+  ExportListCount              ExportListCount[]
+  ExportExceedReport           ExportExceedReport[]
+  CompanyGameEngines           CompanyGameEngines[]
+  CompanyPlatformExperience    CompanyPlatformExperience[]
+  AdClicksByUser               AdClicksByUser[]
+  Oldslugs                     Oldslugs[]
+  CompanyAdminGroups           CompanyAdminGroups[]
+  CompanyAdminUser             CompanyAdminUser[]
+  filtersShareLink             FiltersShareLink[]               @relation("filtersShareLink")
+  sponsoredCompany             ServiceCategoryStats[]           @relation("sponsoredCompany")
+  sponsoreViewedCompany        ServiceCategoryStats[]           @relation("sponsorClickedCompany")
+  ServiceProviderAnnouncements ServiceProviderAnnouncements[]
+  AnnouncementStats            AnnouncementStats[]
+  AnnouncementUpdates          AnnouncementUpdates[]
+  TestimonialStats             TestimonialStats[]
+  MySparkNames                 MySparkNames[]
+}
+
+model Opportunities {
+  id                       Int                        @id @default(autoincrement())
+  company                  Companies                  @relation(fields: [companyId], references: [id])
+  companyId                Int
+  name                     String                     @db.VarChar(255)
+  description              String?
+  oppStatus                OPPORTUNITY_STATUS
+  industryTypes            IndustryTypes              @relation(fields: [industryId], references: [id])
+  industryId               Int
+  technologies             String?
+  approxStartDateCondition Int?
+  approxStartDate          DateTime?
+  approxEndDateCondition   Int?
+  approxEndDate            DateTime?
+  expiryDate               DateTime?
+  staffMonths              Int
+  showCompanyName          Boolean                    @default(false)
+  showContactPerson        Boolean                    @default(false)
+  contactPersonName        String?
+  isReceiveEmailEnabled    Boolean                    @default(false)
+  isArchieve               Boolean                    @default(false)
+  isDelete                 Boolean                    @default(false)
+  status                   Int                        @default(1)
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  serviceProvidersIntrests ServiceProvidersIntrests[]
+  ServicesOpt              ServicesOpt[]
+  FileUploads              FileUploads[]
+  PlatformsOpt             PlatformsOpt[]
+  opportunityNotification  GeneralNotifications[]     @relation("opportunityNotification")
+}
+
+model Services {
+  id                   Int                    @id @default(autoincrement())
+  serviceName          String                 @db.VarChar(255)
+  groupId              Int                    @default(1)
+  categoryId           Int?
+  serviceCategories    ServiceCategories?     @relation(fields: [categoryId], references: [id])
+  status               Int                    @default(1)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  capabilities         Capabilities[]
+  ServicesOpt          ServicesOpt[]
+  spProjectservices    SpProjectservices[]
+  SponseredServices    SponseredServices[]
+  ServiceCategoryStats ServiceCategoryStats[]
+}
+
+model Capabilities {
+  id                Int                 @id @default(autoincrement())
+  service           Services            @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId         Int
+  capabilityName    String              @db.VarChar(255)
+  status            Int                 @default(1)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  ServicesOpt       ServicesOpt[]
+  SpProjectservices SpProjectservices[]
+}
+
+model ServicesOpt {
+  id            Int            @id @default(autoincrement())
+  opportunities Opportunities? @relation(fields: [opportunityId], references: [id])
+  opportunityId Int?
+  company       Companies?     @relation(fields: [companyId], references: [id])
+  companyId     Int?
+  service       Services?      @relation(fields: [serviceId], references: [id])
+  serviceId     Int?
+  capability    Capabilities?  @relation(fields: [capabilityId], references: [id])
+  capabilityId  Int?
+  isDelete      Boolean        @default(false)
+  status        Int            @default(1)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Platforms {
+  id                        Int                         @id @default(autoincrement())
+  name                      String                      @db.VarChar(255)
+  status                    Int                         @default(1)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  PlatformsOpt              PlatformsOpt[]
+  CompanyPlatformExperience CompanyPlatformExperience[]
+}
+
+model PlatformsOpt {
+  id                 Int                @id @default(autoincrement())
+  platforms          Platforms?         @relation(fields: [platformId], references: [id])
+  platformId         Int?
+  opportunities      Opportunities?     @relation(fields: [opportunityId], references: [id])
+  opportunityId      Int?
+  portfolioProjects  PortfolioProjects? @relation(fields: [portfolioProjectId], references: [id])
+  portfolioProjectId Int?
+  isDelete           Boolean            @default(false)
+  status             Int                @default(1)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model ServiceProvidersIntrests {
+  id                   Int                           @id @default(autoincrement())
+  company              Companies                     @relation(fields: [companyId], references: [id])
+  companyId            Int
+  opportunity          Opportunities                 @relation(fields: [opportunityId], references: [id])
+  opportunityId        Int
+  description          String
+  isNewIntrest         Boolean                       @default(true)
+  isDelete             Boolean                       @default(false)
+  status               Int                           @default(1)
+  createdAt            DateTime                      @default(now())
+  updatedAt            DateTime                      @updatedAt
+  opportunityIntrested OpportinityIntrestWithFiles[] @relation("opportunityIntrested")
+}
+
+model MyLists {
+  id                      Int                       @id @default(autoincrement())
+  user                    Users                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                  Int
+  name                    String                    @db.VarChar(255)
+  description             String
+  isArchieve              Boolean                   @default(false)
+  isDelete                Boolean                   @default(false)
+  status                  Int                       @default(1)
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  IntrestedInMyLists      IntrestedInMyLists[]
+  MyIntrestedProjectsList MyIntrestedProjectsList[]
+  ListSharingDetails      ListSharingDetails[]
+}
+
+model IntrestedInMyLists {
+  id        Int       @id @default(autoincrement())
+  list      MyLists   @relation(fields: [listId], references: [id])
+  listId    Int
+  company   Companies @relation(fields: [companyId], references: [id])
+  companyId Int
+  isDelete  Boolean   @default(false)
+  status    Int       @default(1)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model MyProjects {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  user        Users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  description String
+
+  isArchieve              Boolean                   @default(false)
+  isDelete                Boolean                   @default(false)
+  status                  Int                       @default(1)
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  intrestedInMyProjects   IntrestedInMyProjects[]
+  MyIntrestedProjectsList MyIntrestedProjectsList[]
+  ProjectSharingDetails   ProjectSharingDetails[]
+}
+
+model IntrestedInMyProjects {
+  id            Int        @id @default(autoincrement())
+  project       MyProjects @relation(fields: [projectId], references: [id])
+  projectId     Int
+  company       Companies  @relation(fields: [companyId], references: [id])
+  companyId     Int
+  isshortlisted Boolean?   @default(false)
+  isDelete      Boolean    @default(false)
+  status        Int        @default(1)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model MyIntrestedProjectsList {
+  id        Int        @id @default(autoincrement())
+  project   MyProjects @relation(fields: [projectId], references: [id])
+  projectId Int
+  list      MyLists    @relation(fields: [listId], references: [id])
+  listId    Int
+  isDelete  Boolean    @default(false)
+  status    Int        @default(1)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model PortfolioProjects {
+  id                   Int            @id @default(autoincrement())
+  company              Companies      @relation(fields: [companyId], references: [id])
+  companyId            Int
+  name                 String         @db.VarChar(255)
+  completionDate       DateTime
+  description          String
+  testimonial_name     String?
+  testimonial_company  String?
+  testimonial_title    String?
+  testimonial_feedback String?
+  reOrderingId         Int            @default(1)
+  isArchieve           Boolean        @default(false)
+  isDelete             Boolean        @default(false)
+  status               Int            @default(1)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  FileUploads          FileUploads[]
+  PlatformsOpt         PlatformsOpt[]
+  AnnouncementUpdates  AnnouncementUpdates[]
+  TestimonialStats     TestimonialStats[]
+}
+
+model FileUploads {
+  id                 Int                @id @default(autoincrement())
+  company            Companies?         @relation(fields: [companyId], references: [id])
+  companyId          Int?
+  portfolioProjects  PortfolioProjects? @relation(fields: [portfolioProjectId], references: [id], onDelete: Cascade)
+  portfolioProjectId Int?
+  opportunity        Opportunities?     @relation(fields: [opportunityId], references: [id])
+  opportunityId      Int?
+  type               ASSET_TYPE
+  fileUrl            String
+  thumbnail          String?
+  isDelete           Boolean            @default(false)
+  status             Int                @default(1)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  idSelect           Boolean            @default(false)
+}
+
+model CompanyCounts {
+  id               Int       @id @default(autoincrement())
+  company          Companies @relation(fields: [companyId], references: [id])
+  companyId        Int       @unique
+  pageVisitedCount Int       @default(0)
+  pageViewedCount  Int       @default(0)
+  status           Int       @default(1)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model CompanySizes {
+  id        Int         @id @default(autoincrement())
+  size      String      @db.VarChar(255)
+  status    Int         @default(1)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  companies Companies[]
+}
+
+model Country {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  Region          Region?           @relation(fields: [region_id], references: [id], onDelete: Cascade)
+  region_id       Int?
+  status          Int               @default(1)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  CompanyAddress  CompanyAddress[]
+  CompanyContacts CompanyContacts[]
+}
+
+model Region {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(255)
+  Country   Country[]
+  status    Int       @default(1)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model CompanyAddress {
+  id            Int        @id @default(autoincrement())
+  Companies     Companies? @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  company_id    Int?
+  location_name String?
+  address1      String?
+  address2      String?
+  state         String     @db.VarChar(255)
+  city          String     @db.VarChar(255)
+  zipcode       String     @db.VarChar(255)
+  status        Int        @default(1)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  Country       Country?   @relation(fields: [countryId], references: [id])
+  countryId     Int?
+}
+
+model CompanyContacts {
+  id           Int       @id @default(autoincrement())
+  company      Companies @relation(fields: [companyId], references: [id])
+  companyId    Int
+  country      Country   @relation(fields: [countryId], references: [id])
+  countryId    Int
+  name         String
+  email        String
+  title        String
+  linkedInUrl  String
+  calendarLink String    @default("")
+  profilePic   String    @default("")
+  isDelete     Boolean   @default(false)
+  status       Int       @default(1)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model CertificationAndDiligence {
+  id                  Int             @id @default(autoincrement())
+  company             Companies       @relation(fields: [companyId], references: [id])
+  companyId           Int             @unique
+  foundingYear        DateTime
+  founderName         String
+  foundingDescription String
+  workModel           WORK_MODEL_TYPE
+  certifications      String
+  Security            String
+  tools               String?
+  isDelete            Boolean         @default(false)
+  status              Int             @default(1)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model BillingDetails {
+  id                      Int            @id @default(autoincrement())
+  user                    Users          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                  Int
+  stripeCustomerId        String?
+  stripeSubscriptionId    String?
+  subscriptionType        String?
+  stripeExpireDate        DateTime?
+  subscriptionAmount      Float?
+  isSubscriptionCancelled Boolean        @default(false)
+  cancellationDate        DateTime?
+  cancellationReason      String?
+  reasonDescription       String?
+  message                 String?
+  billingCountry          String?
+  billingRegion           String?
+  isActive                Boolean        @default(false)
+  status                  Int            @default(1)
+  isRenewed               Boolean        @default(false)
+  paymentStatus           PAYMENT_STATUS @default(succeeded)
+  firstPaymentFailDate    DateTime?
+  paymentAttemptCount     Int            @default(0)
+  failureReason           String?
+  isCouponApplied         Boolean        @default(false)
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+}
+
+model FlaggedUsers {
+  id                Int       @id @default(autoincrement())
+  company           Companies @relation("flaggedCompany", fields: [companyId], references: [id])
+  companyId         Int
+  reportedCompany   Companies @relation("reportedCompany", fields: [reportedCompanyId], references: [id])
+  reportedCompanyId Int
+  details           String
+  isDelete          Boolean   @default(false)
+  isReportResolved  Boolean   @default(false)
+  status            Int       @default(1)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model IndustryTypes {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(255)
+  status        Int             @default(1)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  opportunities Opportunities[]
+}
+
+model RecentlyViewedProfiles {
+  id               Int       @id @default(autoincrement())
+  viewedCompany    Companies @relation("ViewedCompany", fields: [companyId], references: [id])
+  visitorCompany   Companies @relation("VisitorCompany", fields: [visitorCompanyId], references: [id])
+  visitorCompanyId Int
+  companyId        Int
+  status           Int       @default(1)
+  isDelete         Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model SponsoredPartners {
+  id                Int                @id @default(autoincrement())
+  fileUrl           String
+  fileName          String
+  fileIndex         String
+  fileType          PartnerFilesTypes?
+  companyWebsiteUrl String?
+  isSelected        Boolean            @default(false)
+  status            Int                @default(1)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model PortfolioAlbum {
+  id                  Int                   @id @default(autoincrement())
+  albumName           String
+  companies           Companies             @relation(fields: [companyId], references: [id])
+  companyId           Int
+  status              Int                   @default(1)
+  reOrderingId        Int                   @default(1)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  portfolioAlbumFiles PortfolioAlbumFiles[]
+}
+
+model PortfolioAlbumFiles {
+  id             Int            @id @default(autoincrement())
+  portfolioAlbum PortfolioAlbum @relation(fields: [albumId], references: [id])
+  albumId        Int
+  fileUrl        String
+  thumbnail      String?
+  type           String?
+  fileName       String?
+  fileIndex      String?        @default("")
+  isSelected     Boolean        @default(false)
+  status         Int            @default(1)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model TemporaryUploadedFiles {
+  id           Int      @id @default(autoincrement())
+  formUniqueId String
+  fileName     String
+  isUploaded   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SpBuyerNotes {
+  id              Int       @id @default(autoincrement())
+  sPBuyerNoteId   Companies @relation("spbuyernotesId", fields: [buyerId], references: [id])
+  sPNotecompanyId Companies @relation("spcompanynotesId", fields: [companyId], references: [id])
+  buyerId         Int
+  companyId       Int
+  title           String
+  note            String
+  isDelete        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model SpRatesbyService {
+  id                   Int       @id @default(autoincrement())
+  sPBuyerRateId        Companies @relation("spbuyerRateId", fields: [buyerId], references: [id])
+  sPBuyerRateCompanyId Companies @relation("spcompanyRateId", fields: [companyId], references: [id])
+  buyerId              Int
+  companyId            Int
+  service              String
+  dayRate              String
+  montlyRate           String
+  discountRate         String
+  notes                String
+  isDelete             Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
+model SpProjectPerformance {
+  id                Int                 @id @default(autoincrement())
+  sPBuyerCompanyId  Companies           @relation("spbuyerProjectId", fields: [buyerId], references: [id])
+  sPCompanyId       Companies           @relation("spcompanyProjectId", fields: [companyId], references: [id])
+  buyerId           Int
+  companyId         Int
+  projectname       String
+  quality           Int
+  onTimeDelivery    Int
+  communication     Int
+  overallRating     Int
+  comment           String
+  isDelete          Boolean             @default(false)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  spProjectservices SpProjectservices[]
+}
+
+model SpProjectservices {
+  id           Int                  @id @default(autoincrement())
+  service      Services?            @relation(fields: [serviceId], references: [id])
+  serviceId    Int?
+  capability   Capabilities?        @relation(fields: [capabilityId], references: [id])
+  capabilityId Int?
+  spProject    SpProjectPerformance @relation(fields: [projectId], references: [id])
+  projectId    Int
+  isDelete     Boolean              @default(false)
+  status       Int                  @default(1)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+}
+
+model SPBuyerRatingOnserviceProvider {
+  id                   Int              @id @default(autoincrement())
+  sPBuyerRating        Companies        @relation("sPBuyerRatings", fields: [buyerId], references: [id])
+  sPcompanyRating      Companies        @relation("sPcompanyRatings", fields: [companyId], references: [id])
+  buyerId              Int
+  companyId            Int
+  prefferedPartner     RATING_STATUS?
+  performanceRating    Int?
+  avgPerformanceRating Int              @default(0)
+  nonDiscloser         RATING_STATUS?
+  masterService        RATING_STATUS?
+  securityStatus       SECURITY_STATUS?
+  sowStatus            SOW_STATUS?
+  rateCardUrl          String?
+  fileName             String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+}
+
+model searchTextStats {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  user            Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  searchText      String
+  fromOpportunity Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+model serviceTextStats {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  user            Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serviceText     String
+  fromOpportunity Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+model capabilityTextStats {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  user            Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  capabilityText  String
+  fromOpportunity Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+model BuyersStats {
+  id                Int        @id @default(autoincrement())
+  buyerCompany      Companies  @relation("buyerCompany", fields: [buyerCompanyId], references: [id])
+  buyerCompanyId    Int
+  providerCompany   Companies? @relation("providerCompany", fields: [providerCompanyId], references: [id])
+  providerCompanyId Int?
+  visitCounts       Int        @default(1)
+  isContacted       Boolean    @default(false)
+  contactedAt       DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model FaqQuestions {
+  id          Int      @id @default(autoincrement())
+  faqQuestion String
+  faqAnswer   String
+  isArchieve  Boolean  @default(false)
+  isDelete    Boolean  @default(false)
+  orderById   Int      @default(autoincrement())
+  status      Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Advertisements {
+  id                Int              @id @default(autoincrement())
+  companyName       String
+  adImagePath       String
+  mobileAdImagePath String           @default("")
+  adURL             String
+  adURLStaticPage   String?
+  adPage            String
+  startDate         DateTime
+  endDate           DateTime
+  clicksReceived    Int              @default(0)
+  externalClicks    Int              @default(0)
+  isArchieve        Boolean          @default(false)
+  isDelete          Boolean          @default(false)
+  status            Int              @default(1)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  AdClicksByUser    AdClicksByUser[]
+  LatestArticles    LatestArticles[]
+}
+
+model OldPrimaryEmail {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  oldEmail     String
+  updatedEmail String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model TwoFactorDetails {
+  id             Int       @id @default(autoincrement())
+  userId         Int       @unique
+  otp            String?
+  otpCreatedAt   DateTime?
+  isActive       Boolean   @default(false)
+  isVerified     Boolean   @default(false)
+  mailSendCounts Int       @default(0)
+  status         Int       @default(1)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  user           Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CompanyContactStats {
+  id                  Int       @id @default(autoincrement())
+  providingCompany    Companies @relation("providingCompany", fields: [providingCompanyId], references: [id])
+  providingCompanyId  Int
+  contactingCompany   Companies @relation("contactingCompany", fields: [contactingCompanyId], references: [id])
+  contactingCompanyId Int
+  clickCounts         Int       @default(0)
+  meetingClickCounts  Int       @default(0)
+  status              Int       @default(1)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Events {
+  id               Int              @id @default(autoincrement())
+  eventName        String
+  eventDescription String
+  eventUrl         String
+  eventLocation    String
+  eventLogo        String
+  eventStartDate   DateTime         @db.Date
+  eventEndDate     DateTime         @db.Date
+  displayOrder     Int
+  isArchieve       Boolean          @default(false)
+  isDelete         Boolean          @default(false)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  EventAttendees   EventAttendees[]
+}
+
+model EventAttendees {
+  id              Int        @id @default(autoincrement())
+  Companies       Companies? @relation(fields: [companyId], references: [id])
+  companyId       Int?
+  Events          Events?    @relation(fields: [eventsId], references: [id])
+  eventsId        Int?
+  meetToMatchLink String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model ListSharingDetails {
+  id                  Int      @id @default(autoincrement())
+  MyLists             MyLists  @relation(fields: [listId], references: [id], onDelete: Cascade)
+  listId              Int
+  theToken            String
+  status              Int      @default(1)
+  theTokenUpdatedDate DateTime @default(now())
+}
+
+model ApplicationSettings {
+  id        Int      @id @default(autoincrement())
+  enable2Fa Boolean  @default(true)
+  isActive  Boolean  @default(true)
+  status    Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectSharingDetails {
+  id               Int        @id @default(autoincrement())
+  myProjects       MyProjects @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId        Int
+  theToken         String
+  status           Int        @default(1)
+  tokenCreatedDate DateTime   @default(now())
+}
+
+model SponseredServices {
+  id               Int        @id @default(autoincrement())
+  serviceId        Int
+  Services         Services   @relation(fields: [serviceId], references: [id])
+  defafultImg      String
+  sponseredImg     String?
+  sponseredLogoImg String?
+  serviceTitle     String
+  companyId        Int?
+  Companies        Companies? @relation(fields: [companyId], references: [id])
+  startDate        DateTime?  @db.Date
+  endDate          DateTime?  @db.Date
+  isArchieve       Boolean    @default(false)
+  isDelete         Boolean    @default(false)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}
+
+model ArticleCategory {
+  id             Int              @id @default(autoincrement())
+  categoryName   String
+  isActive       Boolean          @default(false)
+  isDelete       Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  LatestArticles LatestArticles[]
+}
+
+model LatestArticles {
+  id              Int              @id @default(autoincrement())
+  ArticleCategory ArticleCategory? @relation(fields: [categoryId], references: [id])
+  Advertisements  Advertisements?  @relation(fields: [advtId], references: [id])
+  advtId          Int?
+  categoryId      Int?
+  title           String?
+  postName        String?
+  description     String?
+  logoPath        String
+  webUrl          String
+  StartDate       DateTime         @db.Date
+  EndDate         DateTime         @db.Date
+  isActive        Boolean          @default(false)
+  isArchieve      Boolean          @default(false)
+  isDelete        Boolean          @default(false)
+  displayOrder    Int
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model NewUpdatedUsers {
+  id           Int        @id @default(autoincrement())
+  Companies    Companies? @relation(fields: [companyId], references: [id])
+  companyId    Int?
+  userCategory String
+  categoryType Int?
+  isActive     Boolean
+  isDelete     Boolean
+  displayDate  DateTime?  @db.Date
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model ExportListCount {
+  id                     Int          @id() @default(autoincrement())
+  companyId              Int
+  Companies              Companies    @relation(fields: [companyId], references: [id])
+  exportType             EXPORT_TYPE?
+  exportedListCount      Int?
+  exportedCompaniesCount Int?
+  exportedDate           DateTime     @db.Date
+  updatedAt              DateTime     @updatedAt
+}
+
+model ExportExceedReport {
+  id         Int          @id() @default(autoincrement())
+  companyId  Int
+  Companies  Companies    @relation(fields: [companyId], references: [id])
+  type       String?
+  exportType EXPORT_TYPE?
+  message    String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+model ServiceCategories {
+  id        Int        @id() @default(autoincrement())
+  name      String
+  isDelete  Boolean
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Services  Services[]
+}
+
+model CompanyPlatformExperience {
+  id         Int       @id @default(autoincrement())
+  Companies  Companies @relation(fields: [companyId], references: [id])
+  companyId  Int
+  platforms  Platforms @relation(fields: [platformId], references: [id])
+  platformId Int
+  isActive   Boolean
+  isDelete   Boolean
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model CompanyGameEngines {
+  id             Int       @id @default(autoincrement())
+  companyId      Int
+  company        Companies @relation(fields: [companyId], references: [id])
+  gameEngineName String
+  isChecked      Boolean   @default(false)
+  isDelete       Boolean
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model UserSetting {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  user             Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userSPTableOrder String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model AdClicksByUser {
+  id           Int            @id @default(autoincrement())
+  companyId    Int
+  company      Companies      @relation(fields: [companyId], references: [id])
+  adId         Int
+  advertisment Advertisements @relation(fields: [adId], references: [id])
+  clicksCount  Int
+  isDelete     Boolean
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model Oldslugs {
+  id        Int       @id @default(autoincrement())
+  companyId Int
+  company   Companies @relation(fields: [companyId], references: [id])
+  slug      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model CompanyAdminGroups {
+  id               Int                @id @default(autoincrement())
+  name             String
+  isDefault        Boolean            @default(false)
+  companies        Companies          @relation(fields: [companyId], references: [id])
+  companyId        Int
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  permissions      GroupPermission[]
+  companyadminuser CompanyAdminUser[]
+}
+
+model GroupPermission {
+  id        Int                @id @default(autoincrement())
+  group     CompanyAdminGroups @relation(fields: [groupId], references: [id])
+  groupId   Int
+  page      Pages              @relation(fields: [pageId], references: [id])
+  pageId    Int
+  canRead   Boolean            @default(false)
+  canWrite  Boolean            @default(false)
+  canDelete Boolean            @default(false)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model Pages {
+  id            Int               @id @default(autoincrement())
+  name          String            @unique
+  description   String?
+  permissions   GroupPermission[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  pageViewOrder Int               @default(1000)
+}
+
+model CompanyAdminUser {
+  id                        Int                        @id @default(autoincrement())
+  firstName                 String
+  LastName                  String
+  teamandstudio             String?
+  email                     String                     @unique
+  companies                 Companies?                 @relation(fields: [companyId], references: [id])
+  companyId                 Int?
+  groups                    CompanyAdminGroups?        @relation(fields: [groupId], references: [id])
+  groupId                   Int?
+  isDelete                  Boolean                    @default(false)
+  isLoggedInOnce            Boolean                    @default(false)
+  isPasswordChanged         Boolean                    @default(false)
+  isArchieve                Boolean                    @default(false)
+  lastLoginDate             DateTime?                  @db.Date
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  CompanyAdminUserTokens    CompanyAdminUserTokens[]
+  CompanySubUsersOtpDetails CompanySubUsersOtpDetails?
+  InviteeUserLogins         InviteeUserLogins[]
+}
+
+model CompanyAdminUserTokens {
+  id               Int              @id @default(autoincrement())
+  companyAdminUser CompanyAdminUser @relation(fields: [email], references: [email])
+  email            String
+  token            String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model CompanySubUsersOtpDetails {
+  id             Int              @id @default(autoincrement())
+  subUserId      Int              @unique
+  otp            String?
+  otpCreatedAt   DateTime?
+  isActive       Boolean          @default(false)
+  isVerified     Boolean          @default(false)
+  mailSendCounts Int              @default(0)
+  status         Int              @default(1)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  subUser        CompanyAdminUser @relation(fields: [subUserId], references: [id], onDelete: Cascade)
+}
+
+model FollowDetails {
+  id                Int       @id @default(autoincrement())
+  followingCompany  Companies @relation("followingCompany", fields: [companyId], references: [id])
+  companyId         Int
+  followedCompany   Companies @relation("followedCompany", fields: [followedCompanyId], references: [id])
+  followedCompanyId Int
+  isActive          Boolean   @default(true)
+  status            Int       @default(1)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model FollowNotifications {
+  id                      Int       @id @default(autoincrement())
+  notifyingCompany        Companies @relation("notifyingCompany", fields: [notificationById], references: [id])
+  notificationById        Int
+  notifiedCompany         Companies @relation("notifiedCompany", fields: [notificationToId], references: [id])
+  notificationToId        Int
+  notificationDescription String?
+  updatedSection          String?
+  isRead                  Boolean   @default(false)
+  type                    Int       @default(1)
+  isMailSent              Boolean   @default(false)
+  status                  Int       @default(1)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+}
+
+model GeneralNotifications {
+  id                      Int            @id @default(autoincrement())
+  notifyingCompany        Companies      @relation("notifyingCompany", fields: [notificationById], references: [id])
+  notificationById        Int
+  notifiedCompany         Companies      @relation("notifiedCompany", fields: [notificationToId], references: [id])
+  notificationToId        Int
+  opportunityNotification Opportunities? @relation("opportunityNotification", fields: [opportunityId], references: [id])
+  opportunityId           Int?
+  notificationDescription String?
+  updatedSection          String?
+  isRead                  Boolean        @default(false)
+  type                    Int            @default(1)
+  isMailSent              Boolean        @default(false)
+  status                  Int            @default(1)
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+}
+
+model AdminNotifications {
+  id                      Int       @id @default(autoincrement())
+  notificationId          Int       @default(0)
+  adminnotifyToCompany    Companies @relation("adminNotifyToCompany", fields: [notificationCompanyId], references: [id])
+  notificationCompanyId   Int
+  notificationDescription String
+  isDisplay               Boolean
+  type                    Int       @default(4)
+  isDelete                Boolean
+  isRead                  Boolean?
+  startDate               DateTime? @db.Date
+  endDate                 DateTime? @db.Date
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+}
+
+model UserLogins {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loggedInAt DateTime @default(now())
+}
+
+model InviteeUserLogins {
+  id                Int              @id @default(autoincrement())
+  userId            Int
+  companyadminusers CompanyAdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adminUserId       Int              @default(1)
+  companyAdmin      Users            @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  loggedInAt        DateTime         @default(now())
+}
+
+model ProfileViews {
+  id                  Int      @id @default(autoincrement())
+  viewedProfileUserId Int
+  viewerUserId        Int
+  createdAt           DateTime @default(now())
+
+  // Relations
+  viewedProfile Users @relation("ViewedProfile", fields: [viewedProfileUserId], references: [id], onDelete: Cascade)
+  viewer        Users @relation("ViewerProfile", fields: [viewerUserId], references: [id], onDelete: Cascade)
+}
+
+model FiltersShareLink {
+  id                   Int       @id @default(autoincrement())
+  filtersShareLink     Companies @relation("filtersShareLink", fields: [companyId], references: [id])
+  companyId            Int
+  selectedServiceIds   String
+  selectedSevices      String
+  isPremium            String
+  countrySearchValue   String
+  inputValue           String
+  selctedCompanySize   String
+  selectedEventValues  String
+  regionCheckboxFilter String    @default("")
+  shareLinkToken       String
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
+model GenerateFilterShareLinkaccess {
+  id                       Int      @id @default(autoincrement())
+  generateFilterLinkaccess Users    @relation("generateFilterLinkaccess", fields: [email], references: [email])
+  email                    String
+  isArchieve               Boolean
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+model OpportinityIntrestWithFiles {
+  id                   Int                      @id @default(autoincrement())
+  opportunityIntrested ServiceProvidersIntrests @relation("opportunityIntrested", fields: [oppoId], references: [id])
+  oppoId               Int
+  fileUrl              String
+  thumbnailUrl         String
+  createdAt            DateTime                 @default(now())
+}
+
+model ServiceCategoryStats {
+  id                 Int       @id @default(autoincrement())
+  service            Services  @relation(fields: [serviceId], references: [id])
+  serviceId          Int
+  sponsoredCompany   Companies @relation("sponsoredCompany", fields: [sponsoredCompanyId], references: [id])
+  sponsoredCompanyId Int
+  clickedCompany     Companies @relation("sponsorClickedCompany", fields: [clickedCompanyId], references: [id])
+  clickedCompanyId   Int
+  clickCounts        Int       @default(0)
+  status             Int       @default(1)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model ServiceProviderAnnouncements {
+  id                  Int                   @id @default(autoincrement())
+  companyId           Int
+  company             Companies             @relation(fields: [companyId], references: [id])
+  title               String
+  description         String
+  linkUrl             String?
+  imageUrl            String
+  expiryDate          DateTime?             @db.Date
+  orderValue          Int                   @default(1)
+  isArchieve          Boolean               @default(false)
+  isDelete            Boolean               @default(false)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  AnnouncementStats   AnnouncementStats[]
+  AnnouncementUpdates AnnouncementUpdates[]
+}
+
+model AnnouncementStats {
+  id             Int                          @id @default(autoincrement())
+  announcementId Int
+  annoncement    ServiceProviderAnnouncements @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  companyId      Int
+  company        Companies                    @relation(fields: [companyId], references: [id])
+  viewCount      Int                          @default(0)
+  clickCount     Int                          @default(0)
+  isDelete       Boolean                      @default(false)
+  createdAt      DateTime                     @default(now())
+  updatedAt      DateTime                     @updatedAt
+}
+
+model AnnouncementUpdates {
+  id                Int                           @id @default(autoincrement())
+  Companies         Companies?                    @relation(fields: [companyId], references: [id])
+  companyId         Int
+  SpAnnouncements   ServiceProviderAnnouncements? @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  announcementId    Int?
+  testimonials      PortfolioProjects?            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId         Int?
+  categoryType      String                        @default("Announcement")
+  isActive          Boolean
+  isDelete          Boolean
+  displayDate       DateTime?                     @db.Date
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @updatedAt
+}
+
+model TestimonialStats {
+  id              Int                   @id @default(autoincrement())
+  testimonialId   Int
+  testimonials    PortfolioProjects?    @relation(fields: [testimonialId], references: [id], onDelete: Cascade)
+  companyId       Int
+  company         Companies             @relation(fields: [companyId], references: [id])
+  viewCount       Int                   @default(0)
+  clickCount      Int                   @default(0)
+  isDelete        Boolean               @default(false)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+}
+
+model MySparkNames{
+  id             Int                   @id @default(autoincrement())  
+  companyId      Int
+  company         Companies             @relation(fields: [companyId], references: [id])
+  security        String                @default("Legal & Security")
+  nda             String                @default("Non Disclosure Agreement")
+  msa             String                @default("Master Service Agreement")
+  ss              String                @default("Security Status")
+  sows            String                @default("Statement of Work Status")
+  rates           String                @default("Rates by Service")
+  performance     String                @default("Project Performance Reviews")
+  notes           String                @default("Notes")
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+}
+
+model GeneratedUrls{
+   id                  Int                   @id @default(autoincrement())  
+   userId              Int
+   user                Users                 @relation(fields: [userId], references: [id])
+   theToken            String
+   urlGeneratedDate    DateTime              @db.Date
+   updatedAt           DateTime              @updatedAt
+}
+model SparkPlusUsers{
+   id                  Int                   @id @default(autoincrement())  
+   buyerId             Int
+   user                Users                  @relation(fields: [buyerId], references: [id])
+   sparkUserId         Int
+   isPaidUser          Boolean                @default(true)
+   isArchieve          Boolean                @default(false)
+   isDelete            Boolean                @default(false)
+   createdAt           DateTime               @default(now())
+   updatedAt           DateTime               @updatedAt
+}
+enum ROLE_CODE {
+  admin
+  service_provider
+  buyer
+}
+
+enum APPROVAL_STATUS {
+  pending
+  underReview
+  approved
+  pwdCreated
+  rejected
+  completed
+}
+
+enum ASSET_TYPE {
+  image
+  video
+  file
+}
+
+enum OPPORTUNITY_STATUS {
+  draft
+  publish
+}
+
+enum WORK_MODEL_TYPE {
+  onSite
+  remote
+  hybrid
+  network
+}
+
+enum USER_TYPE {
+  init
+  free
+  trial
+  paid
+}
+
+enum TRIAL_PERIOD {
+  weekly
+  monthly
+  yearly
+  eightWeeks
+  sixMonths
+}
+
+enum RATING_STATUS {
+  Select
+  yes
+  no
+  inprogress
+  na
+}
+
+enum SECURITY_STATUS {
+  Select
+  approved
+  denied
+  inprogress
+  na
+}
+
+enum PASSWORD_STATUS {
+  init
+  adChanged
+  pwChanged
+}
+
+enum EXPORT_TYPE {
+  export
+  sharelink
+}
+
+enum PAYMENT_STATUS {
+  succeeded
+  failed
+}
+
+enum SOW_STATUS {
+  none
+  inprogress
+  active
+}
+
+enum PartnerFilesTypes {
+  sponsered
+  platinum
+}

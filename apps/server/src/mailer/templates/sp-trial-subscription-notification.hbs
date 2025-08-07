@@ -1,0 +1,50 @@
+<html>
+
+  <head>
+    <title>XDSSPARK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+
+  <body
+    style="width:800px; margin:50px auto;font-family: Arial, Helvetica, sans-serif;"
+  >
+    <table
+      style="border:1px solid #dddddd;width:100%;border-collapse: collapse;"
+    >
+      <tr><td
+         style="text-align:center;background-image: url('{{websiteMailBgUrl}}'); background-size: cover;background-position: center;padding:10px"
+        >
+        <img src="{{websiteLogoUrl}}" alt="XDS-SPARK" width="150" />
+        </td></tr>
+      <tr>
+        <td style="padding:0 20px">
+          <p style="padding-top:10px">Hi {{firstName}},</p>
+          <p>
+            We noticed that your complimentary Premium trial membership is expiring on {{ date }}. After this time, you will not be able to enjoy all features that are sure to support your external development needs.
+          </p>
+          <p>
+            <b><u class="link_color"><a href="{{subscriptionLink}}">Upgrade to a Premium account today</a></u></b> to continue to benefit from the following.
+          </p>
+          <ul>
+             <li style="padding-bottom: 10px;"><b>Rich Company Profile -</b> Maintain a complete company profile that encourages buyers to discover you! This includes Portfolio, Project Highlights, Certification & Due Diligence, About, and Contacts.</li>
+             {{!-- <li style="padding-bottom: 10px;"><b>Browse Opportunities -</b> Review and respond to opportunities posted by others, and indicate interest in those that appear to be a fit for your company. Discover new projects!</li> --}}
+             <li style="padding-bottom: 10px;"><b>Receive Opportunities -</b> Receive project opportunities from Buyers that match your service(s). When you receive a new opportunity, you can indicate interest that the Buyer will receive. Use this to discover new projects.</li>
+             <li style="padding-bottom: 10px;"><b>Partner Relationship Management -</b> Access the <b>My Spark</b> tab to manage personalized partner information that <u>only you can see</u>. If relevant to you, this includes partner status, rate info, performance tracking and notes.</li>
+             <li style="padding-bottom: 10px;"><b>My Lists -</b> Build shareable lists of other Service Providers any way you want, and track and maintain these over time.</li>
+             <li style="padding-bottom: 10px;"><b>My Projects -</b> Create projects and add lists of candidate Service Providers. Share projects with your teams to select partners that are the best fit for engagements.</li>
+             <li><b>Events -</b> Are you attending an upcoming event, like XDS? Indicate you are attending, so that Buyers know they can meet you there if they choose!</li>
+          </ul>
+          <p>
+            Note that if you let your trial period expire, you are automatically reduced to a Foundational membership. Buyers will <b>only</b> be able to view a basic version of your company profile that does not include Portfolio, Project Highlights, Certifications & Diligence, Contacts, and more.
+          </p>
+          <p>
+            <b><u><a href="{{subscriptionLink}}">Click here</a></u></b> to subscribe to Premium. If you no longer have access to your account, please <u><a href="mailto:info@xds-spark.com" >Contact Us</a></u> and we'll help you get started!
+          </p><br/>
+          <p style="margin-top:20px">Cheers,</p>
+          <p>Your friends at XDS Spark</p>
+        </td>
+      </tr>
+    </table>
+  </body>
+
+</html>
