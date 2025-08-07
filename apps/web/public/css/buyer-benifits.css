@@ -1,0 +1,278 @@
+.buyer_benifits_title {
+    color: #9B53D2;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 30px;
+    letter-spacing: 1.14px;
+}
+
+.buyer_h2title {
+    color: #462C87;
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 45px;
+    letter-spacing: 0.38px;
+}
+
+.buyer_inner_text_19 {
+    color: #462C87;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 30px;
+    letter-spacing: 0.38px;
+}
+
+.pharagaph_underline p {
+    border-bottom: 1px solid #9B53D2;
+    padding: 8px 0
+}
+
+.pharagaph_underline p:last-child,
+.pharagaph_underline p:first-child,
+.pharagaph_underline_1 p:last-child {
+    border-bottom: none
+}
+
+.pharagaph_underline_1 p {
+    border-bottom: 1px solid #9B53D2;
+    padding: 8px 0
+}
+
+.buyer_rtitle {
+    color: #FFF;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 48px;
+    letter-spacing: 0.72px;
+}
+
+.buyer_title_text {
+    color: #FFF;
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 55px;
+    letter-spacing: -0.46px;
+}
+
+.buyer_inner_italic {
+    color: #FFF;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 44px;
+}
+
+.account_title {
+    color: #FFF;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 25px;
+    letter-spacing: 0.51px;
+}
+
+.manage_relationship {
+    background: linear-gradient(359deg, #ED217B 16.05%, #ED217B 20.1%, #C6247F 28.88%, #9B2785 39.69%, #792A89 51.17%, #602C8C 61.31%, #522D8E 70.76%, #4D2E8F 78.2%, #4D2E8F 83.6%)
+}
+
+.shadow_box_m {
+    box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.25);
+}
+
+.buyer_fondation_title {
+    color: #462C87;
+    font-size: 25px;
+    font-weight: 900;
+    line-height: 24px;
+}
+
+.footer_overlay_2 {
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.20);
+}
+
+.footer_overlay h2 {
+    color: #FFF;
+    text-align: center;
+    font-size: 23px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 36px;
+    letter-spacing: 0.46px;
+}
+
+.head_back svg {
+    width: 16px;
+    height: 16px;
+}
+
+.head_back {
+    color: #F4E56F;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 36px;
+    letter-spacing: 0.21px;
+    margin-top: 4px;
+    display: block;
+}
+
+.enterprixe_contactus {
+    display: flex;
+    width: 272px;
+    height: 50px;
+    padding: 9.677px 18px 9.677px 9.677px;
+    justify-content: center;
+    align-items: center;
+    gap: 9.677px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    color: #F8F8F8;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 23px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.benifit_h1_color {
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 32px;
+    letter-spacing: 0.25px;
+    text-transform: uppercase;
+}
+
+.list_ul p {
+    color: #000;
+    font-size: 19px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 26px;
+    letter-spacing: 0.18px;
+}
+
+.buyer_footer_bg {
+    background: linear-gradient(80deg, #4C2594 14.02%, #BF5AF3 89.53%);
+    min-height: 500px;
+    margin-top: -250px;
+}
+
+.buyer_footer_alignment {
+    padding-top: 350px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.buyer_reverse_bg{
+    background: linear-gradient(161deg, #ED217B 16.05%, #ED217B 20.1%, #C6247F 28.88%, #9B2785 39.69%, #792A89 51.17%, #602C8C 61.31%, #522D8E 70.76%, #4D2E8F 78.2%, #4D2E8F 83.6%);
+}
+.font_22px {
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px;
+    letter-spacing: -0.44px;
+}
+.font_19px {
+    color: #000800;
+    font-size: 18px;
+    font-style: normal;
+    line-height: 28px;
+}
+.sign_up_button {
+    color: #F8F8F8;
+    text-align: center;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 23px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    border-radius: 10px;
+    background: #BF5AF3;
+    padding: 12px 12px;
+    width: 190px;
+}
+.height_fix {
+    height: 230px;
+}
+.height_fix_center{
+    height: 242px;
+}
+.slider_height_fix{
+   width:553px;
+   height: 703px;
+}
+.spark_slider .bg-white\/50 {
+    background-color: #D9D9D9;
+}
+.spark_slider .bg-white {
+    background-color: #9B53D2 !important;
+}
+.spark_slider .absolute.bottom-5{
+    position: relative;
+    justify-content: center;
+    margin-top: 30px;
+    z-index: 10;
+}
+.plus_border_bottom{
+    border-bottom: 2px solid #462C87;
+}
+@media (max-width: 767px) {
+    .slider_height_fix{
+        width:100%;
+        height:500px
+    }
+    .img_box_shadow {
+        background: transparent;
+        box-shadow: none;
+    }
+    .mobile_head_btn {
+        line-height: 28px;
+        margin-top: 20px;
+    }
+
+    .buyer_rtitle {
+        font-size: 23px;
+        line-height: 30px;
+    }
+
+    .buyer_title_text {
+        font-size: 16px;
+        line-height: 40px;
+    }
+
+    .buyer_inner_italic {
+        font-size: 16px;
+    }
+
+    .buyer_h2title {
+        font-size: 30px;
+        line-height: 34px;
+    }
+    .benifit_h1_color{
+        font-size: 21px;
+    }
+    .buyer_footer_bg{
+        margin-top: -100px;
+        min-height: 250px;
+    }
+    .buyer_footer_alignment {
+        padding-top: 140px;
+    }
+    .enterprixe_contactus{
+        width: 180px;
+        height: 44px;
+        font-size: 18px;
+        line-height: 23px;
+    }
+    .premium_bg_shadow{
+        transform: scale(1);
+    }
+    .footer_overlay_2{
+        padding: 10px 20px;
+    }
+}

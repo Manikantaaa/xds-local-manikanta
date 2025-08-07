@@ -1,0 +1,46 @@
+ .home_btn_menu {
+     display: none;
+ }
+
+ .font-medium {
+     font-weight: 500;
+ }
+
+ .text-xs {
+     font-size: 0.75rem;
+     line-height: 1rem;
+ }
+
+ a {
+     color: inherit;
+     text-decoration: inherit;
+ }
+
+ .home_hidden {
+     display: none;
+ }
+
+ @media (max-width: 767px) {
+     .home_btn_menu {
+         display: block;
+     }
+
+     .home_container {
+         padding: 0px;
+     }
+
+     .home_hidden {
+         display: block;
+     }
+
+     .mobile_bg {
+         background-color: #14151a;
+     }
+ }
+
+ @media (min-width: 1536px) {
+     .home_menu_screen_big {
+         font-size: 1rem;
+         line-height: 1.5rem;
+     }
+ }

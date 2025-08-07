@@ -1,0 +1,30 @@
+export const popupMessages = {
+    'DEFAULT': 'Subscribe to enable this feature.',
+    'MYLISTS': 'Create and manage lists of service providers any way you choose.',
+    'MYPROJECTS': 'Create projects, add Service Provider lists, and share with your teams.',
+    'MYOPPORTUNITIES': 'Create opportunities for Service Providers to view, and express their interest.',
+    'BROWSEOPPORTUNITIES': 'View posted opportunities, and express your interest in partnering on them.',
+    'SETTINGS_OURWORKS': 'Upload your portfolio, and list project highlights.',
+    'SETTINGS_SERVICES': 'Select core services that represent your company.',
+    'SETTINGS_CONTACTS': 'Add key company contacts.',
+    'SETTINGS_CERT_DILIGENCE': 'Indicate company history, locations, certifications, security and more.',
+    'ADDTO': 'Add Service Providers to Lists.',
+    'SERVICE_PROVIDER_OURWORK': 'See portfolio and project highlights.',
+    'SERVICE_PROVIDER_CERT_DILIGENCE': 'See company history, locations, certifications, security and more.',
+    'SERVICE_PROVIDER_ABOUT': 'See a detailed description about this company.',
+    'SERVICE_PROVIDER_CONTACT': 'See key points of contacts, and contact info.',
+    'SERVICE_PROVIDER_WEBSITE': 'Go to company website.',
+    'SERVICE_PROVIDER_ADDTO': 'Add this Service Provider to Lists.',
+    'SERVICE_PROVIDER_MY_SPARK': 'Manage personalized information including partner status, rates, performance reviews, notes and more!',
+    'OWN_SERVICE_PROVIDER_OURWORK': 'Your portfolio and project highlights.',
+    'OWN_SERVICE_PROVIDER_CERT_DILIGENCE': 'Your company history, locations, certifications, security and more.',
+    'OWN_SERVICE_PROVIDER_CONTACT': 'Your key points of contacts, and contact info.',
+    'OWN_SERVICE_PROVIDER_WEBSITE': 'Go to your website.',
+    'SERVICE_SEE_FULL_PORTFOLIO': 'See the full portfolio.',
+    "EVENTS": "Let others know you are attending events.",
+    'FREE_COMPARE_COMPANIES': "Compare multiple service providers side by side",
+    'COMPANY_ADMIN_ACCESS': "Subscribe to receive four (4) additional user licenses for team members.",
+    'ANNOUNCEMENTS': "Post interesting news and announcements about your company"
+}
+
+export type BodyMessageType = keyof typeof popupMessages;
